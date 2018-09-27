@@ -1,46 +1,59 @@
-import React from 'react';
-import Forecast from './Forecast'
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
-
+import React from "react";
+import { StyleSheet, View, Text, ImageBackground } from "react-native";
+import Forecast from "./Forecast";
 
 export default class Weather extends React.Component {
     constructor(props) {
         super(props);
+        this.APPID = "886705b4c1182eb1c69f28eb8c520e20";
         this.state = {
             forecast: {
-                main: 'main', description: 'description', temp: 0
+                main: "main",
+                description: "description",
+                temp: 0
             }
+        };
+    }
+
+    componentDidMount = () => this.fetchData();
+    componentDidUpdate = (prevProps) => {
+        if (prevProps.zipCode !== this.props.zipCode) {
+            this.fetchData()
         }
     }
 
+
     fetchData = () => {
-        fetch(`http://api.openweathermap.org/data/2.5/weather?q=${this.props.zipCode},th&units=metric&APPID=95cead4db5d52c4a924b17b2233ebd74
-        `)
-        .then((response) => response.json())
-        .then((json) => {
-        this.setState(
-        {
-        forecast: {
-        main: json.weather[0].main,
-        description: json.weather[0].description,
-        temp: json.main.temp
-        }
-        });
-        })
-        .catch((error) => {
-        console.warn(error);
-        });
-        }
-       
-        componentDidMount = () => this.fetchData()
-
-
+        fetch(
+            `http://api.openweathermap.org/data/2.5/weather?q=${
+            this.props.zipCode
+            },th&units=metric&APPID=${this.APPID}`
+        )
+            .then(response => {
+                return response.json();
+            })
+            .then(json => {
+                this.setState({
+                    forecast: {
+                        main: json.weather[0].main,
+                        description: json.weather[0].description,
+                        temp: json.main.temp
+                    }
+                });
+            })
+            .catch(error => {
+                console.warn(error);
+            });
+    };
     render() {
         return (
             <View style={styles.container}>
-                <ImageBackground source={require('../bg.jpeg')} style={styles.backdrop}>
+                <ImageBackground source={require("../sky.jpg")} style={styles.backdrop}>
                     <View style={styles.app}>
-                        <Text style={styles.font}>Zip code is {this.props.zipCode}.</Text>
+                    <Text style={styles.font}>By Areeya Da-oh 5835512075.</Text>
+                        
+                    <Text style={styles.font}>Zip code is {this.props.zipCode}.</Text>
+                        
                         <Forecast {...this.state.forecast} />
                     </View>
                 </ImageBackground>
@@ -62,5 +75,5 @@ const styles = StyleSheet.create({
         color: "white",
         paddingTop: 25,
         fontSize: 18
-    }
+    },
 });
